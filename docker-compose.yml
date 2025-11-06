@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  grafana:
+    container_name: grafana
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Jika ingin langsung build dari GitHub (opsional):
+      # context: https://github.com/awaleilmo/grafana.git
+    image: ghcr.io/awaleilmo/grafana:staging
+    restart: unless-stopped
+    ports:
+      - "3030:3000"  # port staging
+    environment:
+      # --- Basic Auth ---
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+
+      # --- Server Configuration ---
+      GF_SERVER_DOMAIN: rainscope.local
+      GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/"
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+
+      # --- Timezone & Locale ---
+      TZ: Asia/Jakarta
+      GF_DATE_FORMATS_DEFAULT_TIMEZONE: Asia/Jakarta
+
+    volumes:
+      # Persistent data storage
+      - grafana_data:/var/lib/grafana
+
+      # Configuration files
+      - ./conf:/etc/grafana
+
+      # Datasource & dashboard provisioning
+      - ./provisioning:/etc/grafana/provisioning
+
+      # Custom public assets (logo, UI, etc.)
+      - ./public:/usr/share/grafana/public
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - dev-network
+
+volumes:
+  grafana_data:
+    driver: local
+
+networks:
+  dev-network:
+    name: dev-network
+    driver: bridge
