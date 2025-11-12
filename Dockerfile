@@ -116,14 +116,12 @@ RUN go mod download
 COPY embed.go Makefile build.go package.json ./
 COPY cue.mod cue.mod
 COPY kinds kinds
-COPY local local
 COPY packages/grafana-schema packages/grafana-schema
 COPY public/app/plugins public/app/plugins
 COPY public/api-merged.json public/api-merged.json
 COPY pkg pkg
 COPY scripts scripts
 COPY conf conf
-COPY .github .github
 
 ENV COMMIT_SHA=${COMMIT_SHA}
 ENV BUILD_BRANCH=${BUILD_BRANCH}
