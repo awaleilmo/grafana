@@ -8,7 +8,6 @@ services:
       dockerfile: Dockerfile
       # Jika ingin langsung build dari GitHub (opsional):
       # context: https://github.com/awaleilmo/grafana.git
-    image: ghcr.io/awaleilmo/grafana:staging
     restart: unless-stopped
     ports:
       - "3030:3000"  # port staging
@@ -55,5 +54,4 @@ volumes:
 
 networks:
   dev-network:
-    name: dev-network
-    driver: bridge
+    external: true
